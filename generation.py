@@ -9,32 +9,6 @@ speech = Speech(text, lang)
 speech.save("output.mp3")
 
 """
-
-sound = AudioSegment.from_mp3("output.mp3")
-
-# writing mp3 files is a one liner
-two_sec_silence = AudioSegment.from_mp3("output.mp3")
-sound_with_gap = sound[:500] + two_sec_silence + sound[500:]
-
-#sound_with_gap.export("new.mp3", format="mp3")
-
-print(len(sound_with_gap))
-
-
-
-output_fname = "output.mp3"
-text = combination["name"]
-fname = "tmp"+str(combination["id"])+".mp3"
-Speech(text, "en").save(fname)
-speech_sound = AudioSegment.from_mp3(fname)
-silent_gap = AudioSegment.silent(comb_gap * 1000)
-previous_sound = AudioSegment.from_mp3(output_fname)
-
-latest_sound = previous_sound + silent_gap + speech_sound
-latest_sound += AudioSegment.silent((combination["time"]*1000 - len(speech_sound)))
-latest_sound.export(output_fname, format="mp3")
-"""
-"""
 text = "slip and go"
 lang = "en"
 speech = Speech(text, lang)
