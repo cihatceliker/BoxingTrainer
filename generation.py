@@ -1,6 +1,17 @@
 from pydub import AudioSegment
 from google_speech import Speech
 
+
+sound = AudioSegment.from_mp3("s.mp3")
+print(len(sound))
+
+sound = sound[1215000:]
+
+print("exporting")
+sound.export("cut.mp3", format="mp3")
+
+"""
+
 text = "start"
 lang = "en"
 speech = Speech(text, lang)
@@ -8,7 +19,6 @@ speech = Speech(text, lang)
 #print(speech)
 speech.save("output.mp3")
 
-"""
 text = "slip and go"
 lang = "en"
 speech = Speech(text, lang)
