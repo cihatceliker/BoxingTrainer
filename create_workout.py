@@ -17,12 +17,15 @@ def create_workout(num_rounds, round_time, rest_time, comb_gap, combinations):
     workout = []
     for i in range(num_rounds):
         schedule = [EMPTY_PLACEHOLDER] * round_time
-        second = comb_gap
+        second = 3 # for bell sound
         while second < round_time:
             combination = random.choice(combinations)
             for i in range(second, min(second+combination["time"], round_time)):
                 schedule[i] = chr(ASCII_OFFSET+combination["id"])
             second += combination["time"] + comb_gap
-        schedule[::len(schedule)-1] = [chr(ASCII_OFFSET)]*2
-        workout = [*workout, *schedule] + [EMPTY_PLACEHOLDER]*rest_time
+        #schedule[::len(schedule)-1] = [chr(ASCII_OFFSET)]*2
+        schedule[:3] = chr(ASCII_OFFSET)*3
+        schedule[-1] = chr(ASCII_OFFSET)
+        schedule += chr(ASCII_OFFSET)*2
+        workout = [*workout, *schedule] + [EMPTY_PLACEHOLDER]*(rest_time-2)
     return workout[:-rest_time]
