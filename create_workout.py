@@ -1,6 +1,7 @@
 import random
 
 COMB_ID = 0
+SEED = 0
 ASCII_OFFSET = 399
 EMPTY_PLACEHOLDER = "_"
 
@@ -20,6 +21,7 @@ def create_workout(num_rounds, round_time, rest_time, comb_gap, combinations):
     for i in range(num_rounds):
         remaining_seconds = round_time - 4
         combs = []
+        random.seed(SEED+i)
         while len(available_combs:=get_available_combs(remaining_seconds)) > 0:
             combs.append(random.choice(available_combs))
             remaining_seconds -= combs[-1]["time"] + comb_gap
