@@ -1,9 +1,13 @@
-import random
+import random, os
+from gtts import gTTS
+from pydub import AudioSegment
+
 
 COMB_ID = 0
 SEED = 0
 ASCII_OFFSET = 399
 EMPTY_PLACEHOLDER = "_"
+
 
 def create_combination(name, expected_time):
     global COMB_ID
@@ -13,6 +17,7 @@ def create_combination(name, expected_time):
         "time": expected_time,
         "id": COMB_ID
     }
+
 
 def create_workout(num_rounds, round_time, rest_time, comb_gap, combinations):
     workout = []
@@ -36,3 +41,46 @@ def create_workout(num_rounds, round_time, rest_time, comb_gap, combinations):
         schedule += chr(ASCII_OFFSET)*2
         workout = [*workout, *schedule] + [EMPTY_PLACEHOLDER]*(rest_time-2)
     return workout[:-rest_time]
+
+
+def text_to_speech(text):
+    filename = "tmp.mp3"
+    gTTS(text=text, lang="en", slow=False).save(filename)
+    sound = AudioSegment.from_mp3(filename)
+    os.remove(filename)
+    return sound
+
+
+def create_mp3(workout, combinations):
+    # combs must be unique
+    assert len(set([comb["id"] for comb in combinations])) == len(combinations)
+    get_combination_by_id = lambda id_: [comb for comb in combinations if comb["id"] == id_][0]
+    get_blank = lambda: AudioSegment.from_mp3("sfx/template.mp3")[0]
+    get_bell = lambda: AudioSegment.from_mp3("sfx/bell.mp3")
+    
+    final_workout = get_blank()
+    
+    flag = EMPTY_PLACEHOLDER
+    for idx, char in enumerate(workout):
+        if char == EMPTY_PLACEHOLDER:
+            flag = EMPTY_PLACEHOLDER
+            final_workout += get_blank() * 1000
+            continue
+        if flag == char: continue
+        
+        comb_id = ord(char) - ASCII_OFFSET
+
+        # when round begins or ends
+        if comb_id == 0:
+            final_workout += get_bell()
+            flag = char
+            continue
+
+        combination = get_combination_by_id(comb_id)
+        text = combination["name"]
+        
+        voice = text_to_speech(text)
+        final_workout += voice + get_blank() * (combination["time"] * 1000 - len(voice))
+        flag = char
+        
+    return final_workout
